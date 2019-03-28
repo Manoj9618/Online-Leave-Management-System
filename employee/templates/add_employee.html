@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Add Employee {% endblock %}
+
+{% block heading %} ADD EMPLOYEE {% endblock %}
+
+{% block content %}
+
+
+<form action="{% url 'add_employee' %}" method="post" autocomplete="off">
+    {% csrf_token %}
+
+    <h2><span class="badge" style="color:Green">{{ save_message }}</span></h2>
+            <div class="form-group row">
+                {% for field in form %}
+
+                 {% if field.name == 'single_day_entitlement' %}
+                    <div class="col-md-3 mb-2">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        <select class="form-control" id="single_day_entitlement" name="single_day_entitlement">
+                         {% for lc in obj_LeaveCategory %}
+                          <option name="{{ lc.name }}" value="{{ lc.single_day_entitlement }}">{{ lc.single_day_entitlement }}</option>
+                         {% endfor %}
+                        </select>
+                    </div>
+
+                 {% elif field.name == 'annual_entitlement' %}
+                    <div class="col-md-3 mb-2">
+                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                        <select class="form-control" id="annual_entitlement" name="annual_entitlement">
+                         {% for lc in obj_LeaveCategory %}
+                          <option name="{{ lc.name }}" value="{{ lc.annual_entitlement }}">{{ lc.annual_entitlement }}</option>
+                         {% endfor %}
+                        </select>
+                    </div>
+                <!-- Below code for display rest of the field in AddEmployeeForm(ModelForm) -->
+                {% else %}
+                <div class="col-md-3 mb-2">
+                    <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                 {{ field }}
+                </div>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+                {% if save_message %}
+                <a href="{% url 'add_employee' %}" role="button" class="btn btn-primary btn-lg">Close</a>
+                {% else %}
+                <button class="btn btn-primary btn-lg" type="submit">Save</button>
+                {% endif %}
+
+            <div class="form-group row">
+                <div class="col-md-12 mb-2">
+                <!-- Error Handling -->
+                {% if form.errors %}
+                {% for field in form %}
+                {% for error in field.errors %}
+                <div class="alert alert-danger">
+                <strong>{{ form.errors|escape }}</strong>
+                </div>
+                {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                <div class="alert alert-danger">
+                <strong>{{ error|escape }}</strong>
+                </div>
+                {% endfor %}
+                {% endif %}
+                <!-- /Error Handling -->
+            </div>
+            </div>
+
+</form>
+
+
+<script>
+     $("#date_of_joining").datepicker({"dateFormat": "yy-mm-dd", changeMonth:true, changeYear:true, showButtonPanel:true,todayHighlight: true, autoclose: true, todayBtn: true,
+        onClose: function () {
+       }
+    });
+</script>
+<script>
+    var $leave_category = $( '#leave_category' ),
+		$single_day_entitlement = $( '#single_day_entitlement' ),
+        $annual_entitlement = $( '#annual_entitlement' ),
+        $option1 = $single_day_entitlement.find( 'option' );
+        $option2 = $annual_entitlement.find( 'option' );
+
+$leave_category.on( 'change', function() {
+	$single_day_entitlement.html( $option1.filter( '[name="' + this.value + '"]' ) );
+  $annual_entitlement.html( $option2.filter( '[name="' + this.value + '"]' ) );
+} ).trigger( 'change' );
+</script>
+
+<!--
+<script>
+$("#id_leave_category").change(function(){
+if ($("#id_leave_category").val()=="M1"){
+$("#id_single_day_entitlement").val(15);
+$("#id_annual_entitlement").val(17);
+}
+else if ($("#id_leave_category").val()=="M2"){
+$("#id_single_day_entitlement").val(15);
+$("#id_annual_entitlement").val(15);
+}
+else if ($("#id_leave_category").val()=="M3"){
+$("#id_single_day_entitlement").val(12);
+$("#id_annual_entitlement").val(18);
+}
+else{
+$("#id_single_day_entitlement").val(0);
+$("#id_annual_entitlement").val(0);
+}
+});
+</script>
+-->
+
+
+<!--
+<div class="form-group row">
+
+<div class="col-md-2 mb-2">
+            <span class="input-text">Employee ID</span>
+            <div class="form-control-plaintext">{{ form.empid }}</div>
+</div>
+<div class="col-md-4 mb-2">
+            <span class="input-text">Name</span>
+            <div class="form-control-plaintext">{{ form.name }}</div>
+</div>
+<div class="col-md-3 mb-2">
+            <span class="input-text">Company</span>
+            <div class="form-control-plaintext">{{ form.company }}</div>
+</div>
+<div class="col-md-3 mb-2">
+            <span class="input-text">Designation</span>
+            <div class="form-control-plaintext">{{ form.designation }}</div>
+</div>
+</div>
+
+<div class="form-group row">
+
+<div class="col-md-3 mb-2">
+            <span class="input-text">Joining Date</span>
+            <div class="form-control-plaintext">{{ form.date_of_joining }}</div>
+</div>
+<div class="col-md-2 mb-2">
+            <span class="input-text">Work Location</span>
+            <div class="form-control-plaintext">{{ form.work_location }}</div>
+</div>
+<div class="col-md-3 mb-2">
+            <span class="input-text">Employee Setup</span>
+            <div class="form-control-plaintext">{{ form.employee_setup }}</div>
+</div>
+<div class="col-md-4 mb-2">
+            <span class="input-text">Email</span>
+            <div class="form-control-plaintext">{{ form.email }}</div>
+</div>
+</div>
+
+<div class="form-group row">
+
+<div class="col-md-3 mb-2">
+            <span class="input-text">Gender</span>
+            <div class="form-control-plaintext">{{ form.gender }}</div>
+</div>
+<div class="col-md-3 mb-2">
+            <span class="input-text">Marital Status</span>
+            <div class="form-control-plaintext">{{ form.marital_status }}</div>
+</div>
+<div class="col-md-3 mb-2">
+            <span class="input-text">User Type</span>
+            <div class="form-control-plaintext">{{ form.user_type }}</div>
+</div>
+<div class="col-md-3 mb-2">
+            <span class="input-text">Leave Category</span>
+            <div class="form-control-plaintext">{{ form.leave_category }}</div>
+</div>
+</div>
+<div class="form-group row">
+
+<div class="col-md-2 mb-2">
+            <span class="input-text">Manager ID</span>
+            <div class="form-control-plaintext">{{ form.reporting_manager_empid }}</div>
+</div>
+<div class="col-md-4 mb-2">
+            <span class="input-text">Manager Name</span>
+            <div class="form-control-plaintext">{{ form.reporting_manager_name }}</div>
+</div>
+<div class="col-md-4 mb-2">
+            <span class="input-text">Manager Email</span>
+            <div class="form-control-plaintext">{{ form.reporting_manager_email }}</div>
+</div>
+<div class="col-md-2 mb-2">
+            <span class="input-text">Employee Status</span>
+            <div class="form-control-plaintext">{{ form.employee_status }}</div>
+</div>
+</div>
+<button class="btn btn-primary btn-lg" type="submit">Save</button>
+-->
+
+
+{% endblock %}

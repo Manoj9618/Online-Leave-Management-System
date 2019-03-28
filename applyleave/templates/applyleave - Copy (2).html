@@ -1,0 +1,280 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %} Leave Request {% endblock %}
+{% block heading %} APPLY FOR LEAVE {% endblock %}
+
+{% block content %}
+
+<form method="post" action="{% url 'applyleave' %}" autocomplete="off" style="max-width: 70%;" id="leave_app_form">
+    {% csrf_token %}
+
+<div class="card">
+    <div class="card-header" style="background-color:transparent">LEAVE APPLICATION</div>
+    <div class="card-body">
+    <div class="row">
+        <div class="col-md-3 mb-2">
+            <span class="input-text">Leave Type</span>
+            {{ form.leave_type }}
+            <span style="color:red">{{ form.leave_type.errors|striptags }}</span>
+
+        </div>
+        <div class="col-md-3 mb-2">
+            <span class="input-text">From</span>
+            {{ form.leave_start }}
+            <span style="color:red">{{ form.leave_start.errors|striptags }}</span>
+        </div>
+        <div class="col-md-3 mb-3">
+            <span class="input-text">To</span>
+            {{ form.leave_end }}
+            <span style="color:red">{{ form.leave_end.errors|striptags }}</span>
+        </div>
+        <div class="col-md-3 mb-3">
+            <span class="input-text">Leave For</span>
+            {{ form.leave_for }}
+            <span style="color:red">{{ form.leave_for.errors|striptags }}</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3 mb-3" hidden>
+            <span class="input-text">Days</span>
+            {{ form.days }}
+            <span style="color:red">{{ form.days.errors|striptags }}</span>
+        </div>
+        <div class="col-md-4 mb-3">
+            <span class="input-text">Leave Reason</span>
+            {{ form.reason }}
+            <span style="color:red">{{ form.reason.errors|striptags }}</span>
+        </div>
+        <div class="col-md-8 mb-3">
+            <span class="input-text">Comments</span>
+            {{ form.comments }}
+            <span style="color:red">{{ form.comments.errors|striptags }}</span>
+        </div>
+    </div>
+    <!--<a href="{% url 'applyleave' %}" role="button" class="btn  btn-primary">Next</a>-->
+    <button type="submit" class="btn btn-primary" id="btn_leave_app_next">Next </button>
+
+    </div>
+</div>
+</form>
+
+
+{% if request.POST %}
+
+<form action="{% url 'leave_app_review' %}" method="post" style="max-width: 70%;" id="leave_app_review_form">
+    {% csrf_token %}
+    <div class="card">
+    <div class="card-header" style="background-color:transparent">LEAVE APPLICATION DATE WISE BREAKUP</div>
+    <div class="card-body">
+
+
+    <!--<hr style="border-color:Blue">-->
+    <div class="row" hidden>
+        {{ form }}
+    </div>
+    <!--<div class="alert alert-primary">-->
+    <div class="form-row">
+        <div class="input-group col-md-12 md-2">
+            <div class="col-md-3 mb-1">
+                <strong>LEAVE DATE</strong>
+            </div>
+            <div class="col-md-3 mb-1">
+                <strong>LEAVE FOR</strong>
+            </div>
+            <div class="col-md-3 mb-1" hidden>
+                <strong>LEAVE COUNT</strong>
+            </div>
+            <div class="col-md-3 mb-1">
+                <strong>REMARKS</strong>
+            </div>
+        </div>
+
+    </div>
+    <!--</div>-->
+    <!-- Below loop for populate date wise leaves  -->
+    <!--<div class="alert alert-primary">-->
+
+    <div class="form-row">
+        {% for key,value in obj_leave_date_list.items %}
+        <div class="input-group col-md-12 mb-2">
+            <div class="col-md-3 mb-2">
+                <input type="text" class="form-control" name="leave_start_{{ key|date:'Y-m-d' }}"
+                       value="{{ key|date:'Y-m-d' }}" readonly>
+                <!-- obj_leave_app.leave_start|date:'d-M-Y' -->
+            </div>
+            <div class="col-md-3 mb-2">
+                <select class="form-control" name="leave_for_{{ key|date:'Y-m-d' }}" id="leave_for">
+                    {% if value == 'Full Day' %}
+                    <option value="{{ value }}" selected>{{ value }}</option>
+                    <option value="First Half">First Half</option>
+                    <option value="Second Half">Second Half</option>
+                    {% elif value == 'First Half' %}
+                    <option value="{{ value }}" selected>{{ value }}</option>
+                    <option value="Full Day">Full Day</option>
+                    <option value="Second Half">Second Half</option>
+                    {% elif value == 'Second Half' %}
+                    <option value="{{ value }}" selected>{{ value }}</option>
+                    <option value="Full Day">Full Day</option>
+                    <option value="First Half">First Half</option>
+                    {% else %}
+                    <option value="{{ value }}" selected>Full Day</option>
+                    <option value="First Half">First Half</option>
+                    <option value="Second Half">Second Half</option>
+                    {% endif %}
+                </select>
+            </div>
+            <div class="col-md-3 mb-2" hidden>
+                <input class="form-control" id="days" name="days_{{ key|date:'Y-m-d' }}" value="" readonly>
+            </div>
+            <div class="col-md-3 mb-2">
+                <input class="form-control" name="remark_{{ key|date:'Y-m-d' }}" value="{{ key|date:'l' }}" readonly>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <button class="btn btn-primary" type="submit">Next</button>
+    <!--<a href="{% url 'applyleave' %}" role="button" class="btn  btn-primary"><span class="fa fa-arrow-left"></span> Back</a>-->
+    </div>
+</div>
+
+</form>
+{% else %}
+
+{% endif %}
+
+
+
+<form action="" method="post" style="max-width: 70%;" id="leave_app_apply_form">
+<div class="card">
+    <div class="card-header" style="background-color:transparent">LEAVE APPLICATION REVIEW</div>
+    <div class="card-body">
+    <div class="row">
+        <div class="col">
+        <div class="col-md-6 mb-2">
+            <span class="input-text">Leave Type</span>
+          <p>  <strong> {{ form.leave_type.value }} </strong> </p>
+        </div>
+        <div class="col-md-6 mb-2">
+            <span class="input-text">Leave Start Date</span>
+           <p> <strong> {{ form.leave_start.value }} </strong></p>
+        </div>
+        <div class="col-md-6 mb-2">
+            <span class="input-text">Leave End Date</span>
+            <p> <strong> {{ form.leave_end.value }} </strong></p>
+        </div>
+    </div>
+    <div class="col">
+        <div class="col-md-6 mb-2">
+            <span class="input-text">Leave Count</span>
+            <p> <strong> {{ total_leave }}</strong></p>
+        </div>
+        <div class="col-md-6 mb-2">
+            <span class="input-text">Leave Reason</span>
+           <p> <strong> {{ form.reason.value }} </strong></p>
+        </div>
+        <div class="col-md-6 mb-2">
+            <span class="input-text">Comments</span>
+           <p> <strong> {{ form.comments.value }} </strong></p>
+        </div>
+    </div>
+    </div>
+    <!--<a href="{% url 'applyleave' %}" role="button" class="btn  btn-primary">Next</a>-->
+    <button type="submit" class="btn btn-primary" id="btn_leave_app_apply">Apply </button>
+
+    </div>
+</div>
+
+    {% if save_message %}
+    <h5><span class="badge" style="color:Green">{{ save_message }}</span></h5>
+    {% else %}
+    <h5><span class="badge" style="color:Red">{{ error_message }}</span></h5>
+    {% endif %}
+
+</form>
+
+
+
+
+<script>
+    $(function () {
+  $("#datepicker").datepicker({"dateFormat": "yy-mm-dd",
+        autoclose: true,
+        todayHighlight: true
+  }).datepicker('update', new Date());
+});
+
+
+</script>
+
+
+<script>
+     $("#date_start").datepicker({"dateFormat": "yy-mm-dd", beforeShowDay: NotBeforeToday,todayHighlight: true, autoclose: true, todayBtn: true,
+        onClose: function () {
+            $("#date_end").datepicker(
+                "change", {
+                minDate: new Date($('#date_start').val())
+
+            });
+            myfunc()
+            // $("#date_start").datepicker({dateFormat: "yy-mm-dd"});
+        }
+    });
+    $("#date_end").datepicker({"dateFormat": "yy-mm-dd", todayHighlight: true, autoclose: true, todayBtn: true,
+        onClose: function () {
+            $("#date_start").datepicker(
+                "change", {
+                // maxDate: new Date($('#date_end').val())
+            });
+            $("#leave_for").val("Full Day")
+            myfunc()
+        }
+    });
+
+function myfunc(){
+    var start= $("#date_start").datepicker("getDate");
+    var end= $("#date_end").datepicker("getDate");
+    days = (end- start) / (1000 * 60 * 60 * 24);
+    // alert(Math.round(days));
+    $("#days").val(Math.round(days)+1);
+}
+
+function NotBeforeToday(date)
+{
+    var now = new Date();//this gets the current date and time
+    if (date.getFullYear() == now.getFullYear() && date.getMonth() == now.getMonth() && date.getDate() >= now.getDate())
+        return [true];
+    if (date.getFullYear() >= now.getFullYear() && date.getMonth() > now.getMonth())
+       return [true];
+     if (date.getFullYear() > now.getFullYear())
+       return [true];
+    return [false];
+}
+
+
+// $("#leave_for").change(function(){
+// if ($("#leave_for").val()=="Full Day"){
+// $("#days").val(1);
+// }
+// else{
+// $("#days").val(0.5);
+//myfunc();
+// }
+// });
+
+
+
+</script>
+
+
+<!--<script>-->
+<!--$(function(){-->
+<!--$("#btn_leave_app_next").click(function(e) {-->
+<!--$("#leave_app_form").hide();-->
+<!--//$("#btn").hide();-->
+<!--});-->
+<!--});-->
+<!--</script>-->
+
+
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% crispy form form.helper %}
+
+<html>
+<title>{% block title %} Add Employee {% endblock %}</title>
+<head>
+
+</head>
+
+<body>
+{% block content %}
+
+<form action="{% url 'add_employee' %}" method="post">
+    {% csrf_token %}
+        <div class="form-group row">
+        {% for form in form %}
+            <div class="col-md-3 mb-2">
+                <span class="input-text">{{ form.label }}</span>
+                {{ form }}
+            </div>
+        {% endfor %}
+        </div>
+    <button type="submit">Save</button>
+</form>
+
+
+<script>
+     $("#date_of_joining").datepicker({"dateFormat": "yy-mm-dd", changeMonth:true, changeYear:true,
+        onClose: function () {
+       }
+    });
+</script>
+<script>
+    var $leave_category = $( '#leave_category' ),
+		$single_day_entitlement = $( '#single_day_entitlement' ),
+        $annual_entitlement = $( '#annual_entitlement' ),
+        $option1 = $single_day_entitlement.find( 'option' );
+        $option2 = $annual_entitlement.find( 'option' );
+
+$leave_category.on( 'change', function() {
+	$single_day_entitlement.html( $option1.filter( '[name="' + this.value + '"]' ) );
+  $annual_entitlement.html( $option2.filter( '[name="' + this.value + '"]' ) );
+} ).trigger( 'change' );
+</script>
+
+
+{% endblock %}
+</body>
+</html>

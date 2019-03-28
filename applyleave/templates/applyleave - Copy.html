@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+<html>
+<title>{% block title %} Leave Request {% endblock %}</title>
+
+<head>
+
+</head>
+
+<body>
+{% block content %}
+
+<form method="post" action="{% url 'applyleave' %}">
+    {% csrf_token %}
+<div class="card border-info mb-3" style="max-width: 50rem;">
+    <div class="card-header"><h5 style="color:blue">APPLY FOR LEAVE</h5></div>
+  <div class="card-body text-info">
+    <!--<h5 class="card-title">APPLY FOR LEAVE</h5>-->
+    <!--<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
+       <div class="row">
+            <div class="col-md-3 mb-2">
+                <span class="input-text">Leave Type</span>
+                 {{ form.leave_type }}
+            </div>
+            <div class="col-md-3 mb-2">
+                <span class="input-text">From</span>
+                {{ form.leave_start }}
+            </div>
+            <div class="col-md-3 mb-3">
+                <span class="input-text">To</span>
+                {{ form.leave_end }}
+            </div>
+            <div class="col-md-3 mb-3">
+                <span class="input-text">Leave For</span>
+                {{ form.leave_for }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2 mb-3">
+                <span class="input-text">Days</span>
+                {{ form.days }}
+            </div>
+            <div class="col-md-4 mb-3">
+                <span class="input-text">Leave Reason</span>
+                {{ form.reason }}
+            </div>
+            <div class="col-md-6 mb-3">
+                <span class="input-text">Comments</span>
+                {{ form.comments }}
+            </div>
+        </div>
+
+      <button type="submit" class="btn btn-primary">Apply</button>
+
+    <br>
+    {% if save_message %}
+      <h4><span class="badge" style="color:Green">{{ save_message }}</span></h4>
+    {% else %}
+      <h4><span class="badge" style="color:Red">{{ error_message }}</span></h4>
+    {% endif %}
+
+            {% if request.method == 'POST' %}
+                {% if not save_message %}
+                {% for field in form %}
+                {% for error in field.errors %}
+                <div class="alert alert-danger">
+                <strong>{{ form.errors|escape }}</strong>
+                </div>
+                {% endfor %}
+                {% endfor %}
+                {% endif %}
+            {% else %}
+            {% endif %}
+
+  </div>
+</div>
+
+
+</form>
+<script>
+    $(function () {
+  $("#datepicker").datepicker({"dateFormat": "yy-mm-dd",
+        autoclose: true,
+        todayHighlight: true
+  }).datepicker('update', new Date());
+});
+</script>
+
+
+<script>
+     $("#date_start").datepicker({"dateFormat": "yy-mm-dd", beforeShowDay: NotBeforeToday,todayHighlight: true, autoclose: true, todayBtn: true,
+        onClose: function () {
+            $("#date_end").datepicker(
+                "change", {
+                minDate: new Date($('#date_start').val())
+
+            });
+            myfunc()
+            // $("#date_start").datepicker({dateFormat: "yy-mm-dd"});
+        }
+    });
+    $("#date_end").datepicker({"dateFormat": "yy-mm-dd", todayHighlight: true, autoclose: true, todayBtn: true,
+        onClose: function () {
+            $("#date_start").datepicker(
+                "change", {
+                // maxDate: new Date($('#date_end').val())
+            });
+            $("#leave_for").val("Full Day")
+            myfunc()
+        }
+    });
+
+function myfunc(){
+    var start= $("#date_start").datepicker("getDate");
+    var end= $("#date_end").datepicker("getDate");
+    days = (end- start) / (1000 * 60 * 60 * 24);
+    // alert(Math.round(days));
+    $("#days").val(Math.round(days)+1);
+}
+
+function NotBeforeToday(date)
+{
+    var now = new Date();//this gets the current date and time
+    if (date.getFullYear() == now.getFullYear() && date.getMonth() == now.getMonth() && date.getDate() >= now.getDate())
+        return [true];
+    if (date.getFullYear() >= now.getFullYear() && date.getMonth() > now.getMonth())
+       return [true];
+     if (date.getFullYear() > now.getFullYear())
+       return [true];
+    return [false];
+}
+
+
+$("#leave_for").change(function(){
+if ($("#leave_for").val()=="Half Day"){
+$("#days").val(parseInt($("#days").val()) / 2);
+}
+else{
+myfunc();
+}
+});
+
+</script>
+
+
+{% endblock %}
+</body>
+</html>

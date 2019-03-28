@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% crispy form form.helper %}
+
+
+<html>
+<title>{% block title %} Add Employee {% endblock %}</title>
+<head>
+</head>
+
+<body>
+{% block content %}
+
+<form method="post" action="{% url 'addemployee' %}"> {% csrf_token %}
+
+<h4 style="color:Blue">ADD EMPLOYEE</h4>
+<hr style="border-color:Blue">
+<h2><span class="badge" style="color:Green">{{ save_message }}</span></h2>
+<div class="form-group row">
+
+<div class="col-md-2 mb-2">
+    <span class="input-text">Employee ID</span>
+    <div class="form-control-plaintext">
+        <input type="text" class="form-control" name="empid" id="empid" placeholder="Employee ID" required />
+    </div>
+</div>
+<div class="col-md-4 mb-2">
+    <span class="input-text">Name</span>
+    <div class="form-control-plaintext">
+        <input type="text" class="form-control" name="name" id="name" placeholder="Employee Name" required />
+    </div>
+</div>
+<div class="col-md-3 mb-2">
+    <span class="input-text">Company</span>
+    <div class="form-control-plaintext">
+        <select class="form-control" id="company" name="company" required>
+            {% for company in obj_Company %}
+            <option value="{{ company.name }}">{{ company.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="col-md-3 mb-2">
+    <span class="input-text">Designation</span>
+    <div class="form-control-plaintext">
+        <input type="text" class="form-control" name="designation" id="designation" placeholder="Designation" required />
+    </div>
+</div>
+</div>
+
+<div class="form-group row">
+
+<div class="col-md-2 mb-2">
+     <span class="input-text">Joining Date</span>
+     <div class="form-control-plaintext">
+         <input type="text" class="form-control" name="date_of_joining" id="date_of_joining" placeholder="YYYY-MM-DD" required />
+     </div>
+</div>
+<div class="col-md-2 mb-2">
+    <span class="input-text">Work Location</span>
+    <div class="form-control-plaintext">
+        <input type="text" class="form-control" name="work_location" id="work_location" placeholder="Location" required />
+    </div>
+</div>
+<div class="col-md-2 mb-2">
+    <span class="input-text">Employee Setup</span>
+    <div class="form-control-plaintext">
+    <select class="form-control" name="employee_setup" id="employee_setup" required>
+        <option value="Employee">Employee</option>
+        <option value="Professional">Professional</option>
+        <option value="Intern">Intern</option>
+    </select>
+    </div>
+</div>
+<div class="col-md-4 mb-2">
+    <span class="input-text">Email</span>
+    <div class="form-control-plaintext">
+        <input type="email" class="form-control" name="email" id="email" placeholder="Email" required />
+    </div>
+</div>
+
+<div class="col-md-2 mb-2">
+    <span class="input-text">Gender</span>
+    <div class="form-control-plaintext">
+        <select class="form-control" name="gender" id="gender" required>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
+    </div>
+</div>
+</div>
+
+<div class="form-group row">
+
+    <div class="col-md-2 mb-2">
+    <span class="input-text">Marital Status</span>
+    <div class="form-control-plaintext">
+        <select class="form-control" name="marital_status" id="marital_status" required>
+            <option value="Single">Single</option>
+            <option value="Married">Married</option>
+        </select>
+    </div>
+</div>
+<div class="col-md-2 mb-2">
+    <span class="input-text">User Type</span>
+    <div class="form-control-plaintext">
+        <select class="form-control" id="user_type" name="user_type" required>
+            <option value="User">User</option>
+            <option value="Manager">Manager</option>
+            <option value="HR">HR</option>
+            <option value="Admin">Admin</option>
+        </select>
+    </div>
+</div>
+<div class="col-md-2 mb-2">
+    <span class="input-text">Weekend Day</span>
+    <div class="form-control-plaintext">
+        <select class="form-control" name="weekend_day" id="weekend_day" required>
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
+    </div>
+</div>
+<div class="col-md-2 mb-2">
+    <span class="input-text">Leave Category</span>
+    <div class="form-control-plaintext">
+        <select class="form-control" name="leave_category" id="leave_category" required>
+            {% for lc in obj_LeaveCategory %}
+            <option name="{{ lc.name }}">{{ lc.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+<div class="col-md-2 mb-2">
+      <span class="input-text">SingleDay Entitlement</span>
+      <div class="form-control-plaintext">
+          <select class="form-control" name="single_day_entitlement" id="single_day_entitlement" required>
+            {% for lc in obj_LeaveCategory %}
+            <option name="{{ lc.name }}">{{ lc.single_day_entitlement }}</option>
+            {% endfor %}
+          </select>
+      </div>
+</div>
+<div class="col-md-2 mb-2">
+    <span class="input-text">Annual Entitlement</span>
+    <div class="form-control-plaintext">
+          <select class="form-control" name="annual_entitlement" id="annual_entitlement" required>
+            {% for lc in obj_LeaveCategory %}
+            <option name="{{ lc.name }}">{{ lc.annual_entitlement }}</option>
+            {% endfor %}
+          </select>
+    </div>
+</div>
+</div>
+<div class="form-group row">
+
+<div class="col-md-2 mb-2">
+    <span class="input-text">Manager ID</span>
+    <div class="form-control-plaintext">
+        <input type="text" class="form-control" name="reporting_manager_empid" id="reporting_manager_empid" placeholder="Emp ID" required />
+    </div>
+</div>
+<div class="col-md-3 mb-2">
+    <span class="input-text">Manager Name</span>
+    <div class="form-control-plaintext">
+        <input type="text" class="form-control" name="reporting_manager_name" id="reporting_manager_name" placeholder="Manager Name" required />
+    </div>
+</div>
+<div class="col-md-3 mb-2">
+    <span class="input-text">Manager Email</span>
+    <div class="form-control-plaintext">
+        <input type="email" class="form-control" name="reporting_manager_email" id="reporting_manager_email" placeholder="Manager Email" required />
+    </div>
+</div>
+<div class="col-md-2 mb-2">
+    <span class="input-text">Date of Leaving</span>
+    <div class="form-control-plaintext">
+        <input type="text" class="form-control" name="date_of_leaving" id="date_of_leaving" placeholder="YYYY-MM-DD" disabled />
+    </div>
+</div>
+<div class="col-md-2 mb-2">
+    <span class="input-text">Employee Status</span>
+    <div class="form-control-plaintext">
+        <select class="form-control" name="employee_status" id="employee_status" required>
+            <option value="Active">Active</option>
+            <option value="Inactive">Inactive</option>
+        </select>
+    </div>
+</div>
+</div>
+    <button class="btn btn-primary btn-lg" type="submit">Save</button>
+
+</form>
+
+<script>
+     $("#date_of_joining").datepicker({"dateFormat": "yy-mm-dd", changeMonth:true, changeYear:true,
+        onClose: function () {
+       }
+    });
+</script>
+
+<script>
+    var $leave_category = $( '#leave_category' ),
+		$single_day_entitlement = $( '#single_day_entitlement' ),
+        $annual_entitlement = $( '#annual_entitlement' ),
+        $option1 = $single_day_entitlement.find( 'option' );
+        $option2 = $annual_entitlement.find( 'option' );
+
+$leave_category.on( 'change', function() {
+	$single_day_entitlement.html( $option1.filter( '[name="' + this.value + '"]' ) );
+  $annual_entitlement.html( $option2.filter( '[name="' + this.value + '"]' ) );
+} ).trigger( 'change' );
+</script>
+
+{% endblock %}
+
+</body>
+</html>
